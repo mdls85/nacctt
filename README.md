@@ -1,2 +1,1 @@
-# nacctt
-NACCTT App
+# nacctt app
