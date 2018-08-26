@@ -1,14 +1,18 @@
 package com.example.mdls8.nacctt;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -21,6 +25,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.location.places.GeoDataClient;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.PlaceDetectionClient;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -30,8 +37,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private GoogleMap myMap;
     private Location lastKnownLocation;
+    public static final String USER_LAT="lat";
+    public static final String USER_LONG="long";
+
     // default location (POS, T&T) and default zoom to use when location permission is not granted.
-    private final LatLng mDefaultLocation = new LatLng(10.536421, -61.311951);
+    public static final LatLng mDefaultLocation = new LatLng(10.536421, -61.311951);
     private static final int DEFAULT_ZOOM = 15;
 
     @Override
@@ -47,10 +57,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
 
         mapFragment.getMapAsync(this);
+
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getDeviceLocation();
+
+                if(lastKnownLocation != null){
+                    // location accessed successfully... pass data to activity to add washroom location
+                    Intent intent = new Intent(MainActivity.this, AddWashroomActivity.class);
+
+                    intent.putExtra(USER_LAT, lastKnownLocation.getLatitude());
+                    intent.putExtra(USER_LONG, lastKnownLocation.getLongitude());
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     @Override
     public void onMapReady(GoogleMap map) {
+
         // callback method to get a handle to the map object
         myMap = map;
 
@@ -123,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     new LatLng(lastKnownLocation.getLatitude(),
                                             lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
                         } else {
+                            lastKnownLocation = null;
                             Log.d("Location", "Current location is null. Using defaults.");
                             Log.e("Location", "Exception: %s", task.getException());
                             myMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
