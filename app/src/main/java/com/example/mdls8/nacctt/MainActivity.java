@@ -32,6 +32,7 @@ import com.google.android.gms.location.places.PlaceDetectionClient;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final int MY_LOCATION_REQUEST_CODE=1;
+    public static final int ADD_TOILET_ACTIVITY=2;
     private boolean locationPermissionGranted;
     // The entry point to the Fused Location Provider.
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     intent.putExtra(USER_LAT, lastKnownLocation.getLatitude());
                     intent.putExtra(USER_LONG, lastKnownLocation.getLongitude());
-                    startActivity(intent);
+                    startActivityForResult(intent,ADD_TOILET_ACTIVITY);
                 }
             }
         });
@@ -184,5 +185,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         updateLocationUI();
         getDeviceLocation();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == ADD_TOILET_ACTIVITY) {
+            // Make sure the request was successful
+            Toast.makeText(this, "teststtt", Toast.LENGTH_SHORT).show();
+            if (resultCode == RESULT_OK) {
+                // user added new washroom
+
+                Toast.makeText(this, "hello", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
