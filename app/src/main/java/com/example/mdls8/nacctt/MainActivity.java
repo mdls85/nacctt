@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -25,9 +24,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.location.places.GeoDataClient;
-import com.google.android.gms.location.places.Places;
-import com.google.android.gms.location.places.PlaceDetectionClient;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -192,7 +188,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Check which request we're responding to
         if (requestCode == ADD_TOILET_ACTIVITY) {
             // Make sure the request was successful
-            Toast.makeText(this, "teststtt", Toast.LENGTH_SHORT).show();
             if (resultCode == RESULT_OK) {
                 // user added new washroom
 

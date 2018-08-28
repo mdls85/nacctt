@@ -1,5 +1,6 @@
 package com.example.mdls8.nacctt;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -39,7 +40,7 @@ public class AddWashroomActivity extends AppCompatActivity {
     public void saveWashroom(View view){
         Intent result_intent = new Intent();
         result_intent.putExtra("test", 1);
-        setResult(MainActivity.ADD_TOILET_ACTIVITY,result_intent);
+        setResult(Activity.RESULT_OK,result_intent);
         finish();
     }
 }
