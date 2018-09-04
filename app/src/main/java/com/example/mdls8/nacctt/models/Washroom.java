@@ -1,6 +1,6 @@
-package com.example.mdls8.nacctt;
+package com.example.mdls8.nacctt.models;
 
-class Washroom {
+public class Washroom {
 
     private String name;
     private double lat;

@@ -6,11 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.example.mdls8.nacctt.models.Washroom;
 
-import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.auth.FirebaseAuth;
 
 public class AddWashroomActivity extends AppCompatActivity {
 
