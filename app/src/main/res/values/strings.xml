@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">NACCTT</string>
-    <string name="sign_in_cancelled">Failed. Signin Cancelled</string>
-    <string name="no_internet_connection">Failed. No Internet Connection</string>
-    <string name="unknown_error">Failed. Unknown Error</string>
+    <string name="sign_in_cancelled">Signin Cancelled</string>
+    <string name="no_internet_connection">Cannot Signin. No Internet Connection</string>
+    <string name="unknown_error">Signin Failed. Unknown Error</string>
 
 
     <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->

@@ -25,89 +25,11 @@ import java.util.List;
 
 public class FirebaseUIActivity extends AppCompatActivity {
 
-    private static final int RC_SIGN_IN = 123;
-    private static final String TAG="Login";
-    private FirebaseAuth mAuth;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_firebase_ui);
-        mAuth = FirebaseAuth.getInstance();
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-
-        if (mAuth.getCurrentUser() != null) {
-            // already signed in so redirect to main activity
-            Intent intent = new Intent(this,MainActivity.class);
-            startActivity(intent);
-            finish();
-        } else {
-            // not signed in so present UI for login
-            createSignInIntent();
-        }
-
-    }
-
-    public void createSignInIntent() {
-        // [START auth_fui_create_intent]
-        // Choose authentication providers
-        List<AuthUI.IdpConfig> providers = Arrays.asList(
-                new AuthUI.IdpConfig.EmailBuilder().build(),
-                new AuthUI.IdpConfig.GoogleBuilder().build());
-
-        // Create and launch sign-in intent
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        .setLogo(R.drawable.logo)
-                        .build(),
-                RC_SIGN_IN);
-        // [END auth_fui_create_intent]
-    }
-
-    // [START auth_fui_result]
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == RC_SIGN_IN) {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
-
-            if (resultCode == RESULT_OK) {
-                // Successfully signed in
-
-                Intent intent = new Intent(this,MainActivity.class);
-                startActivity(intent);
-                finish();
-            } else {
-                // Sign in failed. If response is null the user canceled the
-                // sign-in flow using the back button. Otherwise check
-                // response.getError().getErrorCode() and handle the error.
-
-                // sign in failed
-                if (response == null) {
-                    // User pressed back button
-                    Toast.makeText(this, R.string.sign_in_cancelled, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
-                    Toast.makeText(this, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                Toast.makeText(this, R.string.unknown_error, Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "Sign-in error: ", response.getError());
-            }
-        }
-    }
-    // [END auth_fui_result]
 
     public void signOut() {
         // [START auth_fui_signout]
@@ -134,18 +56,18 @@ public class FirebaseUIActivity extends AppCompatActivity {
         // [END auth_fui_delete]
     }
 
-    public void themeAndLogo() {
-        List<AuthUI.IdpConfig> providers = Collections.emptyList();
-
-        // [START auth_fui_theme_logo]
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        //.setLogo(R.drawable.my_great_logo)      // Set logo drawable
-                        //.setTheme(R.style.MySuperAppTheme)      // Set theme
-                        .build(),
-                RC_SIGN_IN);
-        // [END auth_fui_theme_logo]
-    }
+//    public void themeAndLogo() {
+//        List<AuthUI.IdpConfig> providers = Collections.emptyList();
+//
+//        // [START auth_fui_theme_logo]
+//        startActivityForResult(
+//                AuthUI.getInstance()
+//                        .createSignInIntentBuilder()
+//                        .setAvailableProviders(providers)
+//                        //.setLogo(R.drawable.my_great_logo)      // Set logo drawable
+//                        //.setTheme(R.style.MySuperAppTheme)      // Set theme
+//                        .build(),
+//                RC_SIGN_IN);
+//        // [END auth_fui_theme_logo]
+//    }
 }

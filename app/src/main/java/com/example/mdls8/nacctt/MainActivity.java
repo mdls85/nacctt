@@ -15,6 +15,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.mdls8.nacctt.helpers.DbHelper;
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ErrorCodes;
+import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -25,18 +28,30 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final int MY_LOCATION_REQUEST_CODE=1;
+    public static final String USER_LAT="lat";
+    public static final String USER_LONG="long";
+    private static final String TAG="Login";
+
+    // constants for activities started for results
+    private static final int RC_SIGN_IN = 123;
     public static final int ADD_TOILET_ACTIVITY=2;
+
     private boolean locationPermissionGranted;
     // The entry point to the Fused Location Provider.
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private GoogleMap myMap;
     private Location lastKnownLocation;
-    public static final String USER_LAT="lat";
-    public static final String USER_LONG="long";
+
+    // instance to handle user sign in check
+    private FirebaseAuth mAuth;
 
     // default location (POS, T&T) and default zoom to use when location permission is not granted.
     public static final LatLng mDefaultLocation = new LatLng(10.536421, -61.311951);
@@ -46,6 +61,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mAuth = FirebaseAuth.getInstance();
+
+        checkSignedIn();
 
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -184,8 +203,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         getDeviceLocation();
     }
 
+    private void checkSignedIn(){
+        // Check if user is signed in (non-null) and update UI accordingly.
+
+        if (mAuth.getCurrentUser() != null) {
+            // already signed in so redirect to main activity
+            // nothing to do for now
+        } else {
+            // not signed in so present UI for login
+            createSignInIntent();
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         // Check which request we're responding to
         if (requestCode == ADD_TOILET_ACTIVITY) {
             // Make sure the request was successful
@@ -195,5 +227,53 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Toast.makeText(this, "hello", Toast.LENGTH_SHORT).show();
             }
         }
+        else if(requestCode == RC_SIGN_IN){
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+
+            if (resultCode == RESULT_OK) {
+                // Successfully signed in
+                // add user to database if new
+                DbHelper dbHelper = new DbHelper();
+                dbHelper.writeNewUser(mAuth.getUid());
+            } else {
+                // Sign in failed. If response is null the user canceled the
+                // sign-in flow using the back button. Otherwise check
+                // response.getError().getErrorCode() and handle the error.
+
+                // sign in failed
+                if (response == null) {
+                    // User pressed back button
+                    Toast.makeText(this, R.string.sign_in_cancelled, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
+                    Toast.makeText(this, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Toast.makeText(this, R.string.unknown_error, Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Sign-in error: ", response.getError());
+            }
+        }
+    }
+
+    public void createSignInIntent() {
+        // [START auth_fui_create_intent]
+        // Choose authentication providers
+        List<AuthUI.IdpConfig> providers = Arrays.asList(
+                new AuthUI.IdpConfig.EmailBuilder().build(),
+                new AuthUI.IdpConfig.FacebookBuilder().build(),
+                new AuthUI.IdpConfig.GoogleBuilder().build());
+
+        // Create and launch sign-in intent
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .setLogo(R.drawable.logo)
+                        .build(),
+                RC_SIGN_IN);
+        // [END auth_fui_create_intent]
     }
 }
