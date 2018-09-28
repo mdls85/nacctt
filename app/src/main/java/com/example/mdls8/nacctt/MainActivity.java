@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // MAKE SURE LOCATION PERMISSION GRANTED IN ORDER TO ADD TOILET
                 getDeviceLocation();
 
                 if(lastKnownLocation != null){
@@ -107,12 +108,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
-
-        // consider updating map ui only if location permission granted.
-        // configure map object to our requirements
-//        myMap.addMarker(new MarkerOptions()
-//                .position(new LatLng(0, 0))
-//                .title("Marker"));
     }
 
     private void getLocationPermission() {

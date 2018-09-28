@@ -6,32 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".AddWashroomActivity">
 
-    <TextView
-        android:id="@+id/latView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="28dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/longView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/latView" />
-
     <EditText
         android:id="@+id/toiletNameView"
         android:layout_width="wrap_content"
@@ -45,8 +19,9 @@
         android:hint="General Area"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/longView" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Switch
         android:id="@+id/disabilitySwitch"
@@ -87,10 +62,33 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cleanSeekBar" />
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/map-toilet"
+        android:name="com.google.android.gms.maps.MapFragment"
+        android:layout_width="234dp"
+        android:layout_height="197dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        map:cameraTargetLat="10.536421"
+        map:cameraTargetLng="-61.311951"
+        map:cameraZoom="8"
+        map:layout_constraintEnd_toEndOf="parent"
+        map:layout_constraintHorizontal_bias="0.503"
+        map:layout_constraintStart_toStartOf="parent"
+        map:layout_constraintTop_toBottomOf="@+id/ratingBar"
+        map:uiCompass="false"
+        map:uiRotateGestures="true"
+        map:uiZoomControls="false"
+        map:uiZoomGestures="true" />
 
     <Button
         android:id="@+id/saveButton"
@@ -107,6 +105,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
+        app:layout_constraintTop_toBottomOf="@+id/map-toilet" />
 
 </android.support.constraint.ConstraintLayout>
