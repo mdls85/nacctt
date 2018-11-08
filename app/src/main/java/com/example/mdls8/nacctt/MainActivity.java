@@ -44,6 +44,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int RC_SIGN_IN = 123;
     public static final int ADD_TOILET_ACTIVITY=2;
 
+    // Keys for storing activity state.
+    private static final String KEY_CAMERA_POSITION = "camera_position";
+    private static final String KEY_LOCATION = "location";
+
     private boolean locationPermissionGranted;
     // The entry point to the Fused Location Provider.
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -92,6 +96,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        // saves the state of the map when the activity is paused.
+        if (myMap != null) {
+            outState.putParcelable(KEY_CAMERA_POSITION, myMap.getCameraPosition());
+            outState.putParcelable(KEY_LOCATION, lastKnownLocation);
+            super.onSaveInstanceState(outState);
+        }
     }
 
     @Override
@@ -159,9 +173,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if (task.isSuccessful()) {
                             // Set the map's camera position to the current location of the device.
                             lastKnownLocation = task.getResult();
-                            myMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                    new LatLng(lastKnownLocation.getLatitude(),
-                                            lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+
+                            // got last known location, however, in some rare situations this can be null.
+                            if(lastKnownLocation != null){
+                                myMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                        new LatLng(lastKnownLocation.getLatitude(),
+                                                lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+                            }
+                            else{
+                                Toast.makeText(MainActivity.this, "NULL BUT SHOULDN'T" , Toast.LENGTH_SHORT).show();
+                                Log.d("Location", "Current location is null. Using defaults.");
+                                Log.e("Location", "Exception: %s", task.getException());
+                                myMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
+                            }
+
                         } else {
                             lastKnownLocation = null;
                             Log.d("Location", "Current location is null. Using defaults.");
@@ -202,8 +227,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Check if user is signed in (non-null) and update UI accordingly.
 
         if (mAuth.getCurrentUser() != null) {
-            // already signed in so redirect to main activity
-            // nothing to do for now
+            // already signed in so nothing to do for now
+            Log.i("User", "Already loogged in");
         } else {
             // not signed in so present UI for login
             createSignInIntent();
